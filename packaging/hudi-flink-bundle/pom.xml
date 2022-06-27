@@ -36,7 +36,7 @@
     <javax.servlet.version>3.1.0</javax.servlet.version>
     <!-- override to be same with flink 1.15.x -->
     <parquet.version>${flink.format.parquet.version}</parquet.version>
-    <hive.version>2.3.1</hive.version>
+    <hive.version>2.3.6</hive.version>
     <thrift.version>0.9.3</thrift.version>
   </properties>
 
@@ -290,6 +290,10 @@
                   <shadedPattern>org.apache.hudi.org.apache.hadoop.metrics2.util.MetricSampleQuantiles
                   </shadedPattern>
                 </relocation>
+                <relocation>
+                  <pattern>org.apache.parquet</pattern>
+                  <shadedPattern>${flink.bundle.shade.prefix}org.apache.parquet</shadedPattern>
+                </relocation>
               </relocations>
               <filters>
                 <filter>
@@ -335,6 +339,22 @@
           <artifactId>rocksdbjni</artifactId>
           <groupId>org.rocksdb</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>httpclient</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>curator-framework</artifactId>
+          <groupId>org.apache.curator</groupId>
+        </exclusion>
+<!--        <exclusion>-->
+<!--          <artifactId>hbase-client</artifactId>-->
+<!--          <groupId>org.apache.hbase</groupId>-->
+<!--        </exclusion>-->
+<!--        <exclusion>-->
+<!--          <artifactId>hbase-server</artifactId>-->
+<!--          <groupId>org.apache.hbase</groupId>-->
+<!--        </exclusion>-->
       </exclusions>
     </dependency>
     <dependency>
@@ -346,12 +366,122 @@
           <artifactId>guava</artifactId>
           <groupId>com.google.guava</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>httpclient</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpcore</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>curator-framework</artifactId>
+          <groupId>org.apache.curator</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>curator-client</artifactId>
+          <groupId>org.apache.curator</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>curator-recipes</artifactId>
+          <groupId>org.apache.curator</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.hudi</groupId>
       <artifactId>hudi-flink-client</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>parquet-column</artifactId>
+          <groupId>org.apache.parquet</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hadoop-hdfs</artifactId>
+          <groupId>org.apache.hadoop</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hadoop-mapreduce-client-core</artifactId>
+          <groupId>org.apache.hadoop</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>protobuf-java</artifactId>
+          <groupId>com.google.protobuf</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>simpleclient</artifactId>
+          <groupId>io.prometheus</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>simpleclient_common</artifactId>
+          <groupId>io.prometheus</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>zookeeper</artifactId>
+          <groupId>org.apache.zookeeper</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>orc-shims</artifactId>
+          <groupId>org.apache.orc</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>orc-core</artifactId>
+          <groupId>org.apache.orc</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>objenesis</artifactId>
+          <groupId>org.objenesis</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jcodings</artifactId>
+          <groupId>org.jruby.jcodings</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javassist</artifactId>
+          <groupId>org.javassist</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>htrace-core4</artifactId>
+          <groupId>org.apache.htrace</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hadoop-common</artifactId>
+          <groupId>org.apache.hadoop</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hadoop-auth</artifactId>
+          <groupId>org.apache.hadoop</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hadoop-annotations</artifactId>
+          <groupId>org.apache.hadoop</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>error_prone_annotations</artifactId>
+          <groupId>com.google.errorprone</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-math3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+          <groupId>commons-logging</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-io</artifactId>
+          <groupId>commons-io</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>aircompressor</artifactId>
+          <groupId>io.airlift</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>audience-annotations</artifactId>
+          <groupId>org.apache.yetus</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.hudi</groupId>
@@ -366,6 +496,34 @@
         <exclusion>
           <artifactId>guava</artifactId>
           <groupId>com.google.guava</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>parquet-hadoop</artifactId>
+          <groupId>org.apache.parquet</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hudi-hadoop-mr</artifactId>
+          <groupId>org.apache.hudi</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>flink-hadoop-compatibility_2.11</artifactId>
+          <groupId>org.apache.flink</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>avro</artifactId>
+          <groupId>org.apache.avro</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hudi-client-common</artifactId>
+          <groupId>org.apache.hudi</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hudi-common</artifactId>
+          <groupId>org.apache.hudi</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>kafka-clients</artifactId>
+          <groupId>org.apache.kafka</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -424,13 +582,19 @@
       <artifactId>flink-parquet_${scala.binary.version}</artifactId>
       <version>${flink.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>parquet-hadoop</artifactId>
+          <groupId>org.apache.parquet</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.apache.flink</groupId>
-      <artifactId>flink-json</artifactId>
-      <version>${flink.version}</version>
-      <scope>compile</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.apache.flink</groupId>-->
+<!--      <artifactId>flink-json</artifactId>-->
+<!--      <version>${flink.version}</version>-->
+<!--      <scope>compile</scope>-->
+<!--    </dependency>-->
 
     <!-- Parquet -->
     <dependency>
@@ -442,6 +606,10 @@
         <exclusion>
           <groupId>org.xerial.snappy</groupId>
           <artifactId>snappy-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>parquet-column</artifactId>
+          <groupId>org.apache.parquet</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -458,6 +626,14 @@
         <exclusion>
           <groupId>it.unimi.dsi</groupId>
           <artifactId>fastutil</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>parquet-column</artifactId>
+          <groupId>org.apache.parquet</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>parquet-hadoop</artifactId>
+          <groupId>org.apache.parquet</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -520,6 +696,18 @@
           <groupId>org.pentaho</groupId>
           <artifactId>*</artifactId>
         </exclusion>
+        <exclusion>
+          <artifactId>httpclient</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-httpclient</artifactId>
+          <groupId>commons-httpclient</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpcore</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -527,6 +715,20 @@
       <artifactId>hive-exec</artifactId>
       <version>${hive.version}</version>
       <scope>${flink.bundle.hive.scope}</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>httpclient</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-httpclient</artifactId>
+          <groupId>commons-httpclient</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpcore</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>${hive.groupid}</groupId>
@@ -569,6 +771,14 @@
         <exclusion>
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpclient</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpcore</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -649,6 +859,16 @@
       <version>${orc.version}</version>
       <classifier>nohive</classifier>
       <scope>${flink.bundle.hive.scope}</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>httpclient</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>curator-client</artifactId>
+          <groupId>org.apache.curator</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Fasterxml -->
@@ -681,7 +901,7 @@
     <profile>
       <id>flink-bundle-shade-hive2</id>
       <properties>
-        <hive.version>2.3.1</hive.version>
+        <hive.version>2.3.6</hive.version>
         <flink.bundle.hive.scope>compile</flink.bundle.hive.scope>
       </properties>
       <dependencies>
