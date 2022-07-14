@@ -29,6 +29,7 @@
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
     <main.basedir>${project.parent.basedir}</main.basedir>
+<!--    <fasterxml.jackson.databind.version>2.6.5</fasterxml.jackson.databind.version>-->
   </properties>
 
   <build>
@@ -90,6 +91,9 @@
                   <include>com.yammer.metrics:metrics-core</include>
                   <include>com.google.guava:guava</include>
                   <include>commons-io:commons-io</include>
+                  <include>com.fasterxml.jackson.core:jackson-annotations</include>
+                  <include>com.fasterxml.jackson.core:jackson-databind</include>
+                  <include>com.fasterxml.jackson.core:jackson-core</include>
                 </includes>
               </artifactSet>
               <relocations>
@@ -211,6 +215,10 @@
                   <pattern>org.apache.hadoop.metrics2.util.MetricSampleQuantiles</pattern>
                   <shadedPattern>org.apache.hudi.org.apache.hadoop.metrics2.util.MetricSampleQuantiles
                   </shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.fasterxml.jackson</pattern>
+                  <shadedPattern>org.apache.hudi.com.fasterxml.jackson</shadedPattern>
                 </relocation>
               </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>
