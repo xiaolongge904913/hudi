@@ -80,6 +80,8 @@
                   <include>com.google.guava:guava</include>
                   <include>commons-lang:commons-lang</include>
                   <include>com.google.protobuf:protobuf-java</include>
+                  <include>org.apache.avro:avro</include>
+                  <include>org.apache.parquet:parquet-avro</include>
                 </includes>
               </artifactSet>
               <relocations>
@@ -123,6 +125,14 @@
                   <pattern>org.apache.hadoop.hbase.</pattern>
                   <shadedPattern>${presto.bundle.bootstrap.shade.prefix}org.apache.hadoop.hbase.</shadedPattern>
                 </relocation>
+                <relocation>
+                  <pattern>org.apache.avro.</pattern>
+                  <shadedPattern>${presto.bundle.bootstrap.shade.prefix}org.apache.avro.</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.apache.parquet.avro.</pattern>
+                  <shadedPattern>${presto.bundle.bootstrap.shade.prefix}org.apache.parquet.avro.</shadedPattern>
+                </relocation>
               </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <filters>
@@ -134,7 +144,7 @@
                     <exclude>META-INF/*.RSA</exclude>
                     <exclude>META-INF/services/javax.*</exclude>
                     <exclude>com/esotericsoftware/reflectasm/**</exclude>
-                    <exclude>avro/shaded/com/google/common/**</exclude>
+<!--                    <exclude>avro/shaded/com/google/common/**</exclude>-->
                     <exclude>stringBehavior.avsc</exclude>
                   </excludes>
                 </filter>
@@ -193,6 +203,17 @@
       <artifactId>protobuf-java</artifactId>
       <version>2.5.0</version>
       <scope>${presto.bundle.bootstrap.scope}</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.avro</groupId>
+      <artifactId>avro</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.parquet</groupId>
+      <artifactId>parquet-avro</artifactId>
+      <scope>compile</scope>
     </dependency>
 
   </dependencies>
