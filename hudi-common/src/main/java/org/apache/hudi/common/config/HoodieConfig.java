@@ -18,17 +18,18 @@
 
 package org.apache.hudi.common.config;
 
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hudi.common.util.Option;
 import org.apache.hudi.common.util.ReflectionUtils;
+import org.apache.hudi.common.util.StringUtils;
 import org.apache.hudi.exception.HoodieException;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -39,12 +40,6 @@ public class HoodieConfig implements Serializable {
   private static final Logger LOG = LogManager.getLogger(HoodieConfig.class);
 
   protected static final String CONFIG_VALUES_DELIMITER = ",";
-
-  public static HoodieConfig create(FSDataInputStream inputStream) throws IOException {
-    HoodieConfig config = new HoodieConfig();
-    config.props.load(inputStream);
-    return config;
-  }
 
   protected TypedProperties props;
 
@@ -133,6 +128,14 @@ public class HoodieConfig implements Serializable {
     return rawValue.map(Object::toString).orElse(null);
   }
 
+  public <T> List<String> getSplitStrings(ConfigProperty<T> configProperty) {
+    return getSplitStrings(configProperty, ",");
+  }
+
+  public <T> List<String> getSplitStrings(ConfigProperty<T> configProperty, String delimiter) {
+    return StringUtils.split(getString(configProperty), delimiter);
+  }
+
   public String getString(String key) {
     return props.getProperty(key);
   }
@@ -156,10 +159,19 @@ public class HoodieConfig implements Serializable {
     return rawValue.map(v -> Boolean.parseBoolean(v.toString())).orElse(null);
   }
 
+  public boolean getBooleanOrDefault(String key, boolean defaultVal) {
+    return Option.ofNullable(props.getProperty(key)).map(Boolean::parseBoolean).orElse(defaultVal);
+  }
+
   public <T> boolean getBooleanOrDefault(ConfigProperty<T> configProperty) {
     Option<Object> rawValue = getRawValue(configProperty);
     return rawValue.map(v -> Boolean.parseBoolean(v.toString()))
             .orElseGet(() -> Boolean.parseBoolean(configProperty.defaultValue().toString()));
+  }
+
+  public <T> boolean getBooleanOrDefault(ConfigProperty<T> configProperty, boolean defaultVal) {
+    Option<Object> rawValue = getRawValue(configProperty);
+    return rawValue.map(v -> Boolean.parseBoolean(v.toString())).orElse(defaultVal);
   }
 
   public <T> Long getLong(ConfigProperty<T> configProperty) {
