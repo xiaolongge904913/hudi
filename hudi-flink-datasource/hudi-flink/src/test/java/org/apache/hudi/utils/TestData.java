@@ -34,7 +34,10 @@ import org.apache.hudi.common.testutils.HoodieTestUtils;
 import org.apache.hudi.common.util.Option;
 import org.apache.hudi.config.HoodieWriteConfig;
 import org.apache.hudi.configuration.FlinkOptions;
+import org.apache.hudi.configuration.OptionsResolver;
+import org.apache.hudi.sink.utils.InsertFunctionWrapper;
 import org.apache.hudi.sink.utils.StreamWriteFunctionWrapper;
+import org.apache.hudi.sink.utils.TestFunctionWrapper;
 import org.apache.hudi.table.HoodieFlinkTable;
 
 import org.apache.avro.Schema;
@@ -72,6 +75,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -409,9 +413,10 @@ public class TestData {
   public static void writeData(
       List<RowData> dataBuffer,
       Configuration conf) throws Exception {
-    StreamWriteFunctionWrapper<RowData> funcWrapper = new StreamWriteFunctionWrapper<>(
-        conf.getString(FlinkOptions.PATH),
-        conf);
+    TestFunctionWrapper<RowData> funcWrapper =
+        OptionsResolver.isInsertOperation(conf)
+            ? new InsertFunctionWrapper<>(conf.getString(FlinkOptions.PATH), conf)
+            : new StreamWriteFunctionWrapper<>(conf.getString(FlinkOptions.PATH), conf);
     funcWrapper.openFunction();
 
     for (RowData rowData : dataBuffer) {
@@ -577,6 +582,25 @@ public class TestData {
       File baseFile,
       Map<String, String> expected,
       int partitions) throws IOException {
+    checkWrittenData(baseFile, expected, partitions, TestData::filterOutVariables);
+  }
+
+  /**
+   * Checks the source data set are written as expected.
+   *
+   * <p>Note: Replace it with the Flink reader when it is supported.
+   *
+   * @param baseFile   The file base to check, should be a directory
+   * @param expected   The expected results mapping, the key should be the partition path
+   *                   and value should be values list with the key partition
+   * @param partitions The expected partition number
+   * @param extractor  The fields extractor
+   */
+  public static void checkWrittenData(
+      File baseFile,
+      Map<String, String> expected,
+      int partitions,
+      Function<GenericRecord, String> extractor) throws IOException {
     assert baseFile.isDirectory();
     FileFilter filter = file -> !file.getName().startsWith(".");
     File[] partitionDirs = baseFile.listFiles(filter);
@@ -593,7 +617,7 @@ public class TestData {
       List<String> readBuffer = new ArrayList<>();
       GenericRecord nextRecord = reader.read();
       while (nextRecord != null) {
-        readBuffer.add(filterOutVariables(nextRecord));
+        readBuffer.add(extractor.apply(nextRecord));
         nextRecord = reader.read();
       }
       readBuffer.sort(Comparator.naturalOrder());
@@ -654,6 +678,22 @@ public class TestData {
   public static void checkWrittenDataCOW(
       File basePath,
       Map<String, List<String>> expected) throws IOException {
+    checkWrittenDataCOW(basePath, expected, TestData::filterOutVariables);
+  }
+
+  /**
+   * Checks the source data are written as expected.
+   *
+   * <p>Note: Replace it with the Flink reader when it is supported.
+   *
+   * @param basePath The file base to check, should be a directory
+   * @param expected The expected results mapping, the key should be the partition path
+   * @param extractor The extractor to extract the required fields from the avro row
+   */
+  public static void checkWrittenDataCOW(
+      File basePath,
+      Map<String, List<String>> expected,
+      Function<GenericRecord, String> extractor) throws IOException {
 
     // 1. init flink table
     HoodieTableMetaClient metaClient = HoodieTestUtils.init(basePath.toURI().toString());
@@ -672,7 +712,7 @@ public class TestData {
               ParquetReader<GenericRecord> reader = AvroParquetReader.<GenericRecord>builder(new Path(path)).build();
               GenericRecord nextRecord = reader.read();
               while (nextRecord != null) {
-                readBuffer.add(filterOutVariables(nextRecord));
+                readBuffer.add(extractor.apply(nextRecord));
                 nextRecord = reader.read();
               }
             } catch (IOException e) {
@@ -680,8 +720,11 @@ public class TestData {
             }
           });
 
-      assertTrue(partitionDataSet.size() == readBuffer.size() && partitionDataSet.containsAll(readBuffer));
-
+      assertThat("Unexpected records number under partition: " + partition,
+          readBuffer.size(), is(partitionDataSet.size()));
+      for (String record : readBuffer) {
+        assertTrue(partitionDataSet.contains(record), "Unexpected record: " + record);
+      }
     });
 
   }

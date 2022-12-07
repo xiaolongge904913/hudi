@@ -72,6 +72,10 @@
       </resource>
       <resource>
         <directory>src/test/resources</directory>
+        <excludes>
+          <exclude>*-site.xml</exclude>
+        </excludes>
+        <filtering>false</filtering>
       </resource>
     </resources>
   </build>
@@ -85,7 +89,6 @@
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java-util</artifactId>
-      <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>com.google.guava</groupId>
